@@ -4,27 +4,37 @@ const btnPlay = document.getElementById('btn-play');
 
 let arrBombs = [];
 
-const mapDifficulty = new Map([
+const mapCellsDifficulty = new Map([
     ["Easy", 49],
     ["Medium", 81],
     ["Hard", 100]
 ]);
 
-btnPlay.addEventListener('click', function () {
-    generateBombs(16, arrBombs, selectDifficulty.value);
-    generateGrid(selectDifficulty.value);
-});
+const mapBombsDifficulty = new Map([
+    ["Easy", 8],
+    ["Medium", 12],
+    ["Hard", 16]
+]);
+
+btnPlay.addEventListener('click', runGame);
+
+function runGame() {
+    let difficulty = selectDifficulty.value;
+    arrBombs = [];
+    generateBombs(mapBombsDifficulty.get(difficulty), arrBombs, difficulty);
+    generateGrid(difficulty);
+}
 
 function generateGrid(difficulty) {
     switch (difficulty) {
         case "Easy":
-            generateCells(mapDifficulty.get("Easy"));
+            generateCells(mapCellsDifficulty.get("Easy"));
             break;
         case "Medium":
-            generateCells(mapDifficulty.get("Medium"));
+            generateCells(mapCellsDifficulty.get("Medium"));
             break;
         case "Hard":
-            generateCells(mapDifficulty.get("Hard"));
+            generateCells(mapCellsDifficulty.get("Hard"));
             break;
     }
 }
@@ -36,12 +46,22 @@ function generateCells(nCells) {
     for (let i = 0; i < nCells; i++) {
         const eleCell = document.createElement('div');
         eleCell.innerHTML = i + 1;
+        if (arrBombs.includes(i + 1)) {
+            eleCell.classList.add('bomb');
+        }
         eleCell.classList.add('cell');
         eleGrid.append(eleCell);
         eleCell.addEventListener('click', function () {
-            this.classList.toggle('clicked');
-            console.log(this.innerHTML);
+            if (!arrBombs.includes(parseInt(this.innerHTML))) {
+                this.classList.toggle('clicked');
+                console.log(this.innerHTML);
+            } else {
+                console.log("BOMB")
+                showBombs(nCells, arrBombs);
+                // gameOver();
+            }
         });
+
     }
 }
 
@@ -53,7 +73,7 @@ function removeCells(eleGrid) {
 
 function generateBombs(nBombs, arrayBombs, strDifficulty) {
     while (arrayBombs.length !== nBombs) {
-        let numBomb = getRandInt(1, mapDifficulty.get(strDifficulty));
+        let numBomb = getRandInt(1, mapCellsDifficulty.get(strDifficulty));
         if (!arrBombs.includes(numBomb)) {
             arrayBombs.push(numBomb);
         }
@@ -62,4 +82,11 @@ function generateBombs(nBombs, arrayBombs, strDifficulty) {
 
 function getRandInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
+}
+
+function showBombs() {
+    const eleBombs = document.querySelectorAll('.bomb');
+    for (let i = 0; i < eleBombs.length; i++) {
+        eleBombs[i].style.backgroundColor = 'red';
+    }
 }
