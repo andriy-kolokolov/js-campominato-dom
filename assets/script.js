@@ -3,6 +3,7 @@ const selectDifficulty = document.getElementById('select-difficulty');
 const btnPlay = document.getElementById('btn-play');
 
 let arrBombs = [];
+let gameOver = false;
 
 const mapCellsDifficulty = new Map([
     ["Easy", 49],
@@ -19,6 +20,7 @@ const mapBombsDifficulty = new Map([
 btnPlay.addEventListener('click', runGame);
 
 function runGame() {
+    gameOver = false;
     let difficulty = selectDifficulty.value;
     arrBombs = [];
     generateBombs(mapBombsDifficulty.get(difficulty), arrBombs, difficulty);
@@ -51,23 +53,30 @@ function generateCells(nCells) {
         }
         eleCell.classList.add('cell');
         eleGrid.append(eleCell);
+
         eleCell.addEventListener('click', function () {
-            if (!arrBombs.includes(parseInt(this.innerHTML))) {
-                this.classList.toggle('clicked');
-                console.log(this.innerHTML);
+            if (!arrBombs.includes(parseInt(this.innerHTML)) && !gameOver) {
+                this.classList.add('clicked');
+                console.log(`CELL # ${this.innerHTML}`);
             } else {
-                console.log("BOMB")
-                showBombs(nCells, arrBombs);
-                // gameOver();
+                console.log("GAME OVER");
+                showBombs();
+                gameOver = true;
+                eleCell.removeEventListener('click', bombCheck);
             }
         });
+            
 
     }
 }
 
-function removeCells(eleGrid) {
-    while (eleGrid.firstChild) {
-        eleGrid.removeChild(eleGrid.lastChild);
+function bombCheck() {
+
+}
+
+function removeCells(element) {
+    while (element.firstChild) {
+        element.removeChild(element.lastChild);
     }
 }
 
