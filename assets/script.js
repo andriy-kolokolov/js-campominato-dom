@@ -4,6 +4,8 @@ const btnPlay = document.getElementById('btn-play');
 
 let arrBombs = [];
 let gameOver = false;
+let score = 0;
+let difficulty = "";
 
 const mapCellsDifficulty = new Map([
     ["Easy", 49],
@@ -21,8 +23,9 @@ btnPlay.addEventListener('click', runGame);
 
 function runGame() {
     gameOver = false;
-    let difficulty = selectDifficulty.value;
+    score = 0;
     arrBombs = [];
+    difficulty = selectDifficulty.value;
     generateBombs(mapBombsDifficulty.get(difficulty), arrBombs, difficulty);
     generateGrid(difficulty);
 }
@@ -55,23 +58,29 @@ function generateCells(nCells) {
         eleGrid.append(eleCell);
 
         eleCell.addEventListener('click', function () {
-            if (!arrBombs.includes(parseInt(this.innerHTML)) && !gameOver) {
-                this.classList.add('clicked');
-                console.log(`CELL # ${this.innerHTML}`);
-            } else {
+            if (playerWins(score)) {
+                alert(`You win! Your score is: ${score}. Select difficulty and press "Play" to restart`)
+            } else if (!arrBombs.includes(parseInt(this.innerHTML)) && !gameOver) {
+                if (!this.classList.contains('clicked')) {
+                    this.classList.add('clicked');
+                    score++;
+                    console.log(`CELL # ${this.innerHTML}`);
+                    console.log(score);
+                }
+            } else if (this.classList.contains('bomb') || gameOver) {
+                gameOver = true;
                 console.log("GAME OVER");
                 showBombs();
-                gameOver = true;
-                eleCell.removeEventListener('click', bombCheck);
+                alert(`You lost... Your score is: ${score}. Select difficulty and press "Play" to restart`);
             }
         });
-            
-
     }
 }
 
-function bombCheck() {
-
+function playerWins(numScore) {
+    const bombs = mapBombsDifficulty.get(selectDifficulty.value);
+    const cells = mapCellsDifficulty.get(selectDifficulty.value);
+    return (cells - bombs) === numScore;
 }
 
 function removeCells(element) {
