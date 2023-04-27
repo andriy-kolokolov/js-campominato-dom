@@ -60,13 +60,11 @@ function generateCells(nCells) {
         eleCell.addEventListener('click', function () {
             if (playerWins(score)) {
                 alert(`You win! Your score is: ${score}. Select difficulty and press "Play" to restart`)
-            } else if (!arrBombs.includes(parseInt(this.innerHTML)) && !gameOver) {
-                if (!this.classList.contains('clicked')) {
-                    this.classList.add('clicked');
-                    score++;
-                    console.log(`CELL # ${this.innerHTML}`);
-                    console.log(score);
-                }
+            } else if (!arrBombs.includes(parseInt(this.innerHTML)) && !gameOver && !this.classList.contains('clicked')) {
+                this.classList.add('clicked');
+                score++;
+                console.log(`CELL # ${this.innerHTML}`);
+                console.log(score);
             } else if (this.classList.contains('bomb') || gameOver) {
                 gameOver = true;
                 console.log("GAME OVER");
